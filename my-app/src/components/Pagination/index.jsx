@@ -11,6 +11,7 @@ const Pagination = props => {
       onPageChange={e => props.onChangePage(e.selected + 1)}
       pageRangeDisplayed={4}
       pageCount={3}
+      forcePage={props.currentPage - 1}
       renderOnZeroPageCount={null}
     />
   )

@@ -10,13 +10,14 @@ const Search = () => {
   const [value, setValue] = useState('')
 
   const onClickClear = () => {
-    setValue('')
     setSearchValue('')
+    setValue('')
     inputRef.current.focus()
   }
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const updateSearchValue = useCallback(
-    debounce(str => setSearchValue(str), 1000),
+    debounce(str => setSearchValue(str), 250),
     []
   )
 
