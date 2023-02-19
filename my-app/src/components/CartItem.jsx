@@ -1,12 +1,14 @@
 import { useDispatch } from 'react-redux'
-import { addItem, minusItem } from '../redux/slices/cartSlice'
+import { addItem, minusItem, removeItem } from '../redux/slices/cartSlice'
 
 const CartItem = props => {
   const dispatch = useDispatch()
 
   const onClickPlus = () => dispatch(addItem({ id: props.id }))
-
   const onClickMinus = () => dispatch(minusItem(props.id))
+  const onClickRemove = () =>
+    window.confirm('Вы точно хотите удалить свой товар из корзины?') &&
+    dispatch(removeItem(props.id))
 
   return (
     <div className='cart__item'>
@@ -15,7 +17,9 @@ const CartItem = props => {
       </div>
       <div className='cart__item-info'>
         <h3>{props.title}</h3>
-        <p>{props.type} тесто, 26 см.</p>
+        <p>
+          {props.type} тесто, {props.size} см.
+        </p>
       </div>
       <div className='cart__item-count'>
         <div
@@ -66,7 +70,10 @@ const CartItem = props => {
         <b>{props.price * props.count} ₽</b>
       </div>
       <div className='cart__item-remove'>
-        <div className='button button--outline button--circle'>
+        <div
+          onClick={onClickRemove}
+          className='button button--outline button--circle'
+        >
           <svg
             width='10'
             height='10'

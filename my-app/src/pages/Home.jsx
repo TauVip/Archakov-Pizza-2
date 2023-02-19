@@ -16,23 +16,24 @@ import {
   setCurrentPage,
   setFilters
 } from '../redux/slices/filterSlice'
+import { setItems } from '../redux/slices/pizzaSlice'
 
 const Home = () => {
   const { categoryId, sort, currentPage } = useSelector(state => state.filter)
+  const { items } = useSelector(state => state.pizza)
   const { searchValue } = useContext(SearchContext)
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const isSearch = useRef(false)
   const isMounted = useRef(false)
 
-  const [items, setItems] = useState([])
   const [isLoading, setIsLoading] = useState(true)
 
   const onChangeCategory = id => dispatch(setCategoryId(id))
 
   const onChangePage = number => dispatch(setCurrentPage(number))
 
-  const fetchPizzas = useCallback(() => {
+  const fetchPizzas = useCallback(async () => {
     setIsLoading(true)
 
     const category = categoryId ? `category=${categoryId}` : ''
@@ -40,15 +41,16 @@ const Home = () => {
     const order = sort.sortProperty.includes('-') ? 'asc' : 'desc'
     const search = searchValue ? `&search=${searchValue}` : ''
 
-    axios
-      .get(
+    try {
+      const { data } = await axios.get(
         `https://63db9da5a3ac95cec5a618b3.mockapi.io/items?page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}${search}`
       )
-      .then(res => {
-        setItems(res.data)
-        setIsLoading(false)
-      })
-  }, [categoryId, currentPage, searchValue, sort.sortProperty])
+      dispatch(setItems(data))
+    } catch (error) {
+      console.log('Error', error)
+    }
+    setIsLoading(false)
+  }, [categoryId, currentPage, dispatch, searchValue, sort.sortProperty])
 
   useEffect(() => {
     if (isMounted.current) {
